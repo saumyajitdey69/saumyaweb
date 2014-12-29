@@ -23,18 +23,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     if($passwordErr==="" && $usernameErr==="" )
     {
-        $sql="insert into register values('$username','$password')";
-	    if($conn->query($sql))
+        $sql1="select * from register where username='$username'";
+        $result=$conn->query($sql1);
+        if($result->num_rows>0)
         {
-            echo"REGISTERED".'<br>'."YOU WILL BE DIRECTED TO THE LOGIN PAGE";
-            header("refresh:2;url=http://172.30.122.71/chat/exUser.php" );
+            echo "<div style ='color:red ;text-align:center'> The username already exists. Please use another username.</div>";
+            header("refresh:3;url=http://172.30.122.71/chat/newUser.php" );
         }
-	    else
-		    echo $conn->error;
+        else
+        {
+            $sql="insert into register values('$username','$password')";
+	        if($conn->query($sql))
+            {
+                echo"REGISTERED".'<br>'."YOU WILL BE DIRECTED TO THE LOGIN PAGE";
+                header("refresh:2;url=http://172.30.122.71/chat/exUser.php" );
+            }
+	        else
+		       echo $conn->error;
+        }
     }
 }
 ?>
 <style>
+    body
+    {
+        background-color: #FFFF66;
+    }
     h2
     {
         text-align: center;
@@ -44,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     { /* WebKit browsers */
         color:    rgb(0,100,400);
         opacity:0.6;
+        text-align: center;;
     }
     :-moz-placeholder
     { /* Mozilla Firefox 4 to 18 */
@@ -68,19 +83,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 <style>
 .error {color: #FF0000;}
 </style>
-<p><span class="error">* required field.</span></p>
-<form method="post" action="<?=($_SERVER['PHP_SELF'])?>"> 
-    <div class="input-group input-group-lg">
+<body>
+    <div align="center">
+    <p><span class="error">* required field.</span></p>
+    <form method="post" action="<?=($_SERVER['PHP_SELF'])?>"> 
+    <div class="input-group input-group-lg alignment">
     <span class="input-group-addon" id="sizing-addon1"></span>
     <input type="text" class="form-control " name="username" value ="<?php echo $username;?>" placeholder="Username" aria-describedby="sizing-addon1"><font color="red">*
     </div>
 	<span class="error"> <?php echo $usernameErr;?></span>
 	<br><br>
-    <div class="input-group input-group-lg">
+    <div class="input-group input-group-lg alignment">
     <span class="input-group-addon" id="sizing-addon1"></span>
-    <input type="password" class="form-control" name="password" value ="" placeholder="Password" aria-describedby="sizing-addon1"><font color="red">*
+    <input type="password" class="form-control" name="password" value ="<?php echo $password;?>" placeholder="Password" aria-describedby="sizing-addon1"><font color="red">*
     </div>
     <span class="error"> <?php echo $passwordErr;?></span>
     <br><br>
     <input type="submit" name="submit" value="Register"> 
-</form>
+    </form>
+    </div>
+</body>
